@@ -1,0 +1,270 @@
+.bluetooth-setup {
+  max-width: 480px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: all var(--transition-slow);
+}
+
+.bluetooth-setup.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.setup-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.setup-header {
+  text-align: center;
+  animation: fadeIn var(--transition-slow) ease-out;
+}
+
+.setup-title {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-xs);
+}
+
+.setup-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.network-visualization-large {
+  width: 300px;
+  height: 300px;
+  position: relative;
+  animation: fadeIn 0.8s ease-out 0.2s backwards;
+}
+
+.network-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(var(--shadow-glow));
+}
+
+.network-line {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.network-line.disabled {
+  opacity: 0.2;
+  animation: none;
+}
+
+.network-node {
+  animation: scaleIn 0.6s ease-out backwards;
+}
+
+.network-node.disabled {
+  opacity: 0.3;
+  animation: fadeIn 0.6s ease-out backwards;
+}
+
+.center-node {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.center-node.disabled {
+  opacity: 0.3;
+  animation: none;
+}
+
+.bluetooth-status-card {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  animation: slideUp 0.6s ease-out 0.4s backwards;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.bluetooth-status-card.enabled {
+  border-color: var(--accent-primary);
+  background: rgba(0, 255, 136, 0.05);
+  box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.1), var(--shadow-md);
+}
+
+.bluetooth-icon-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.bluetooth-status-card.enabled .bluetooth-icon-large {
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.bluetooth-icon-large::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.bluetooth-status-card.enabled .bluetooth-icon-large::before {
+  opacity: 0.2;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-content {
+  text-align: center;
+}
+
+.status-content h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.3;
+}
+
+.status-content p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.bluetooth-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+  margin-top: var(--spacing-xs);
+}
+
+.bluetooth-features li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: var(--spacing-sm);
+  background: rgba(0, 255, 136, 0.03);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 255, 136, 0.08);
+}
+
+.bluetooth-features li svg {
+  flex-shrink: 0;
+}
+
+.enable-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: 18px var(--spacing-lg);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: var(--bg-primary);
+  font-size: 17px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 16px rgba(0, 255, 136, 0.3);
+  animation: fadeIn 0.6s ease-out 0.6s backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.enable-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.enable-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 255, 136, 0.4);
+}
+
+.enable-btn:hover::before {
+  left: 100%;
+}
+
+.enable-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 12px rgba(0, 255, 136, 0.3);
+}
+
+.success-message {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: var(--radius-md);
+  animation: scaleIn 0.4s ease-out;
+}
+
+.success-message svg {
+  flex-shrink: 0;
+}
+
+.success-message p {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.setup-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+  animation: fadeIn 0.6s ease-out 0.8s backwards;
+}
+
+@media (max-width: 640px) {
+  .setup-title {
+    font-size: 36px;
+  }
+
+  .network-visualization-large {
+    width: 240px;
+    height: 240px;
+  }
+
+  .bluetooth-status-card {
+    padding: var(--spacing-md);
+  }
+}
