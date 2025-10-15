@@ -12,7 +12,7 @@ import LocationChannels from './components/LocationChannels'
 import NetworkPeople from './components/NetworkPeople'
 
 function App() {
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(5)
   const [showCommands, setShowCommands] = useState(false)
   const [showChannels, setShowChannels] = useState(false)
   const [showNetwork, setShowNetwork] = useState(false)
