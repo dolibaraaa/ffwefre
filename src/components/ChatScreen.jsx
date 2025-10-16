@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './ChatScreen.css'
+import CommandSuggestion from './CommandSuggestion'
+import OnlineUsers from './OnlineUsers'
 
 const ChatScreen = ({ onOpenCommands, onOpenChannels, onOpenNetwork }) => {
   const [message, setMessage] = useState('')
-  const [messages] = useState([
+  const [messages, setMessages] = useState([
     {
       id: 1,
       text: 'get people around you to download bitchat and chat with them here!',
@@ -11,12 +13,92 @@ const ChatScreen = ({ onOpenCommands, onOpenChannels, onOpenNetwork }) => {
       isSystem: true
     }
   ])
+  const [showCommandSuggestion, setShowCommandSuggestion] = useState(false)
+  const [currentCommand, setCurrentCommand] = useState(null)
+  const [showOnlineUsers, setShowOnlineUsers] = useState(false)
+  const [screenCleared, setScreenCleared] = useState(false)
+
+  const commands = {
+    '/clear': { description: 'Limpiar mensajes', action: 'clear' },
+    '/w': { description: 'Ver usuarios online', action: 'online' },
+    '/block': { description: 'Bloquear usuario', action: 'block' },
+    '/unblock': { description: 'Desbloquear usuario', action: 'unblock' },
+    '/fav': { description: 'Marcar como favorito', action: 'favorite' }
+  }
+
+  useEffect(() => {
+    if (message.startsWith('/')) {
+      const cmd = Object.keys(commands).find(key => key.startsWith(message))
+      if (cmd && commands[cmd]) {
+        setCurrentCommand({ command: cmd, ...commands[cmd] })
+        setShowCommandSuggestion(true)
+      } else {
+        setShowCommandSuggestion(false)
+      }
+    } else {
+      setShowCommandSuggestion(false)
+    }
+  }, [message])
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      console.log('Sending message:', message)
+      if (message.startsWith('/')) {
+        executeCommand(message)
+      } else {
+        const newMessage = {
+          id: messages.length + 1,
+          text: message,
+          time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+          isSystem: false
+        }
+        setMessages([...messages, newMessage])
+      }
       setMessage('')
+      setShowCommandSuggestion(false)
     }
+  }
+
+  const executeCommand = (cmd) => {
+    const trimmedCmd = cmd.trim()
+    const [command, ...args] = trimmedCmd.split(' ')
+
+    switch(command) {
+      case '/clear':
+        setMessages([])
+        setScreenCleared(true)
+        addSystemMessage('Pantalla limpiada.')
+        break
+      case '/w':
+        setShowOnlineUsers(true)
+        break
+      case '/block':
+        if (args[0]) {
+          addSystemMessage(`Usuario ${args[0]} bloqueado`)
+        }
+        break
+      case '/unblock':
+        if (args[0]) {
+          addSystemMessage(`Usuario ${args[0]} desbloqueado`)
+        }
+        break
+      case '/fav':
+        if (args[0]) {
+          addSystemMessage(`Usuario ${args[0]} agregado a favoritos`)
+        }
+        break
+      default:
+        addSystemMessage(`Comando desconocido: ${command}`)
+    }
+  }
+
+  const addSystemMessage = (text) => {
+    const newMessage = {
+      id: messages.length + 1,
+      text: text,
+      time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      isSystem: true
+    }
+    setMessages(prev => [...prev, newMessage])
   }
 
   const handleAddAttachment = () => {
@@ -46,6 +128,13 @@ const ChatScreen = ({ onOpenCommands, onOpenChannels, onOpenNetwork }) => {
       </div>
 
       <div className="chat-messages">
+        {screenCleared && messages.length === 0 && (
+          <div className="cleared-notice">
+            <button className="undo-btn" onClick={() => setScreenCleared(false)}>
+              [Deshacer]
+            </button>
+          </div>
+        )}
         {messages.map((msg) => (
           <div key={msg.id} className={`message ${msg.isSystem ? 'system-message' : ''}`}>
             <span className="message-text">{msg.text}</span>
@@ -53,6 +142,23 @@ const ChatScreen = ({ onOpenCommands, onOpenChannels, onOpenNetwork }) => {
           </div>
         ))}
       </div>
+
+      {showCommandSuggestion && currentCommand && (
+        <CommandSuggestion
+          command={currentCommand.command}
+          description={currentCommand.description}
+          onExecute={() => {
+            executeCommand(currentCommand.command)
+            setMessage('')
+            setShowCommandSuggestion(false)
+          }}
+          onDismiss={() => setShowCommandSuggestion(false)}
+        />
+      )}
+
+      {showOnlineUsers && (
+        <OnlineUsers onClose={() => setShowOnlineUsers(false)} />
+      )}
 
       <div className="chat-input-container">
         <div className="input-wrapper">
@@ -69,7 +175,7 @@ const ChatScreen = ({ onOpenCommands, onOpenChannels, onOpenNetwork }) => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            onFocus={onOpenCommands}
+            onFocus={() => message.startsWith('/') && setShowCommandSuggestion(true)}
           />
 
           <button className="send-btn" onClick={handleSendMessage}>
